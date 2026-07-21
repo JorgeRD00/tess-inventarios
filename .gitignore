@@ -39,3 +39,8 @@ database/*.db-journal
 # OS
 .DS_Store
 Thumbs.db
+
+# Temporary diagnostic files
+test-login.mjs
+test-login-result.json
+gen-migration.mjs
