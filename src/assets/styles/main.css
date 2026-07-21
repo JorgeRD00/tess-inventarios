@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #2563eb;
+  --color-primary-50: color-mix(in srgb, var(--color-primary) 5%, #e0d9d9);
+  --color-primary-100: color-mix(in srgb, var(--color-primary) 12%, #e0d9d9);
+  --color-primary-200: color-mix(in srgb, var(--color-primary) 25%, #e0d9d9);
+  --color-primary-300: color-mix(in srgb, var(--color-primary) 45%, #e0d9d9);
+  --color-primary-400: color-mix(in srgb, var(--color-primary) 65%, #e0d9d9);
+  --color-primary-500: color-mix(in srgb, var(--color-primary) 82%, #e0d9d9);
+  --color-primary-600: var(--color-primary);
+  --color-primary-700: color-mix(in hsl, var(--color-primary) 88%, black);
+  --color-primary-800: color-mix(in hsl, var(--color-primary) 68%, black);
+  --color-primary-900: color-mix(in hsl, var(--color-primary) 48%, black);
+  --color-primary-950: color-mix(in hsl, var(--color-primary) 28%, black);
+  --color-primary-dark: #2563eb;
+  --color-secondary: #64748b;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #06b6d4;
+}
+
+/* Dynamic primary color overrides for existing blue-* utilities */
+[class~="bg-blue-50"] { background-color: var(--color-primary-50) !important; }
+[class~="bg-blue-100"] { background-color: var(--color-primary-100) !important; }
+[class~="hover:bg-blue-200"]:hover { background-color: var(--color-primary-200) !important; }
+[class~="text-blue-300"] { color: var(--color-primary-300) !important; }
+[class~="bg-blue-600"] { background-color: var(--color-primary-600) !important; }
+[class~="hover:bg-blue-700"]:hover { background-color: var(--color-primary-700) !important; }
+[class~="hover:bg-blue-800"]:hover { background-color: var(--color-primary-800) !important; }
+[class~="text-blue-600"] { color: var(--color-primary-600) !important; }
+[class~="border-blue-600"] { border-color: var(--color-primary-600) !important; }
+
+.dark [class~="dark:bg-blue-900"] { background-color: var(--color-primary-900) !important; }
+.dark [class~="dark:hover:bg-blue-800"]:hover { background-color: var(--color-primary-800) !important; }
+.dark [class~="dark:text-blue-300"] { color: var(--color-primary-300) !important; }
+.dark [class~="dark:bg-blue-900/20"] { background-color: color-mix(in srgb, var(--color-primary-900) 20%, transparent) !important; }
+
+/* Broad primary color theme for cards, tables, inputs and borders */
+[class~="bg-white"] { background-color: var(--color-primary-50) !important; }
+[class~="bg-gray-50"] { background-color: var(--color-primary-50) !important; }
+[class~="bg-gray-100"] { background-color: var(--color-primary-100) !important; }
+[class~="bg-gray-200"] { background-color: var(--color-primary-200) !important; }
+[class~="hover:bg-gray-50"]:hover { background-color: var(--color-primary-50) !important; }
+[class~="hover:bg-gray-300"]:hover { background-color: var(--color-primary-300) !important; }
+[class~="hover:text-gray-700"]:hover { color: var(--color-primary-800) !important; }
+
+.dark [class~="dark:bg-gray-700"] { background-color: var(--color-primary-800) !important; }
+.dark [class~="dark:bg-gray-800"] { background-color: var(--color-primary-900) !important; }
+.dark [class~="dark:bg-gray-900"] { background-color: var(--color-primary-950) !important; }
+.dark [class~="dark:bg-gray-700/50"] { background-color: color-mix(in srgb, var(--color-primary-800) 50%, transparent) !important; }
+.dark [class~="dark:hover:bg-gray-600"]:hover { background-color: var(--color-primary-700) !important; }
+.dark [class~="dark:hover:bg-gray-700/50"]:hover { background-color: color-mix(in srgb, var(--color-primary-700) 50%, transparent) !important; }
+
+/* Dashboard quick access links */
+.quick-access {
+  background-color: var(--color-primary-600);
+}
+.quick-access:hover {
+  background-color: var(--color-primary-700);
+}
+.dark .quick-access {
+  background-color: var(--color-primary-700);
+}
+.dark .quick-access:hover {
+  background-color: var(--color-primary-800);
+}
+
+/* Make secondary buttons stand out in dark mode */
+.dark button[class~="dark:bg-gray-700"] { background-color: var(--color-primary-500) !important; }
+.dark button[class~="dark:hover:bg-gray-600"]:hover { background-color: var(--color-primary-400) !important; }
+
+[class~="border-gray-200"] { border-color: var(--color-primary-200) !important; }
+[class~="border-gray-300"] { border-color: var(--color-primary-300) !important; }
+.dark [class~="dark:border-gray-600"] { border-color: var(--color-primary-600) !important; }
+.dark [class~="dark:border-gray-700"] { border-color: var(--color-primary-700) !important; }
+
+[class~="text-gray-500"] { color: var(--color-primary-600) !important; }
+[class~="text-gray-600"] { color: var(--color-primary-700) !important; }
+.dark [class~="dark:text-gray-400"] { color: var(--color-primary-300) !important; }
+.dark [class~="dark:text-gray-500"] { color: var(--color-primary-400) !important; }
+
+[class~="divide-y"] > :not([hidden]) ~ :not([hidden]) { border-color: var(--color-primary-200) !important; }
+.dark [class~="divide-y"] > :not([hidden]) ~ :not([hidden]) { border-color: var(--color-primary-700) !important; }
+
+/* Colored border for cards/panels in light mode */
+html:not(.dark) [class~="rounded-lg"][class*="shadow"]:not([class*="shadow-none"]) {
+  border: 1px solid var(--color-primary-300) !important;
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--color-primary-700); }
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 { color: var(--color-primary-100); }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}

@@ -1,0 +1,6 @@
+../database/
+../database/*
+*.db
+*.db-journal
+*.db-shm
+*.db-wal

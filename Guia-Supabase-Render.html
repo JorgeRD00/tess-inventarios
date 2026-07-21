@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía: TESS Inventario con Supabase + Render</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --text: #1f2937;
+      --bg: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --row-alt: #f9fafb;
+      --code-bg: #1f2937;
+      --code-text: #f3f4f6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+      margin: 0;
+      padding: 0;
+    }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    h1 { font-size: 2rem; color: var(--primary); margin-bottom: 0.3rem; }
+    h2 { font-size: 1.35rem; margin-top: 2.2rem; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
+    h3 { font-size: 1.1rem; margin-top: 1.6rem; color: #111827; }
+    p, li { font-size: 1rem; }
+    p { margin: 0.9rem 0; }
+    .subtitle { color: var(--muted); font-size: 1.05rem; margin-top: 0; }
+    .box {
+      background: #eff6ff;
+      border-left: 5px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 1.2rem 0;
+    }
+    .warning {
+      background: #fff7ed;
+      border-left-color: #f97316;
+    }
+    .tip {
+      background: #f0fdf4;
+      border-left-color: #22c55e;
+    }
+    ol.steps {
+      counter-reset: step;
+      list-style: none;
+      padding-left: 0;
+    }
+    ol.steps > li {
+      position: relative;
+      padding-left: 56px;
+      margin: 1.8rem 0;
+      min-height: 36px;
+    }
+    ol.steps > li::before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 36px;
+      font-weight: 700;
+    }
+    code {
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: "SF Mono", Monaco, "Cascadia Code", Consolas, monospace;
+      font-size: 0.92em;
+    }
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      font-size: 0.92rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f3f4f6; }
+    tr:nth-child(even) { background: var(--row-alt); }
+    .check {
+      color: #047857;
+      font-weight: 700;
+    }
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    @media print {
+      body { background: white; }
+      .page { padding: 0; max-width: none; }
+      h2 { page-break-after: avoid; }
+      ol.steps > li { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Guía paso a paso: TESS Inventario en Supabase + Render</h1>
+    <p class="subtitle">Para compartir la app entre 2 computadoras en diferentes lugares por internet.</p>
+
+    <div class="box warning">
+      <strong>Resumen de lo que vas a hacer:</strong> vas a crear una base de datos en Supabase y un servidor en Render. Ambas computadoras se conectarán al mismo servidor. El proyecto ya fue preparado: ahora usa PostgreSQL y la URL del backend es configurable.
+    </div>
+
+    <h2>Antes de empezar</h2>
+    <ul>
+      <li>Tener una cuenta de correo para registrarte en los servicios.</li>
+      <li>Tarjeta de crédito/débito (aunque los planes gratis no cobran, algunos piden verificación).</li>
+      <li>El código del proyecto en tu computadora.</li>
+    </ul>
+
+    <h2>Paso a paso</h2>
+    <ol class="steps">
+      <li>
+        <h3>Crea tu base de datos en Supabase</h3>
+        <ol>
+          <li>Entra a <a href="https://supabase.com" target="_blank">supabase.com</a> y crea una cuenta.</li>
+          <li>Clic en <strong>New project</strong>, elige una organización y dale un nombre, por ejemplo <code>tess-inventario</code>.</li>
+          <li>Espera unos segundos a que se cree el proyecto.</li>
+          <li>Ve a <strong>Project Settings</strong> (icono de engranaje) → <strong>Database</strong>.</li>
+          <li>Busca la sección <strong>Connection string</strong> y selecciona <strong>URI</strong>.</li>
+          <li>Copia la cadena de conexión. Se ve así:<br>
+            <pre><code>postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1</code></pre>
+          </li>
+          <li>Guarda esa cadena en un archivo de texto seguro. La necesitarás en el paso 4.</li>
+        </ol>
+        <div class="tip">
+          <strong>Tip:</strong> usa el puerto <strong>6543</strong> (connection pooler) porque Render abre y cierra conexiones constantemente. Así no agotas el límite de Supabase.
+        </div>
+      </li>
+
+      <li>
+        <h3>Prepara el proyecto en tu computadora</h3>
+        <p>El código ya fue ajustado para usar PostgreSQL y una URL de backend configurable. Solo tienes que crear los archivos de variables de entorno.</p>
+        <ol>
+          <li>En la carpeta raíz del proyecto (donde está <code>package.json</code>), crea un archivo llamado <code>.env</code> copiando el contenido de <code>.env.example</code>.</li>
+          <li>Abre <code>.env</code> y deja la línea de <code>VITE_API_BASE_URL</code> para después (cuando Render te dé la URL).</li>
+          <li>En la carpeta <code>src-tauri</code>, crea un archivo llamado <code>.env</code> copiando el contenido de <code>src-tauri/.env.example</code>.</li>
+          <li>Pega la URL de Supabase del paso 1 en la línea de <code>DATABASE_URL</code>.
+            <pre><code>DATABASE_URL=postgresql://postgres.xxxxxx:xxxxxxxx@aws-0-xxxx.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1</code></pre>
+          </li>
+        </ol>
+      </li>
+
+      <li>
+        <h3>Crea las tablas en Supabase</h3>
+        <p>Primero borra la carpeta con migraciones viejas de SQLite (si existe), porque ahora usaremos PostgreSQL:</p>
+        <pre><code>Remove-Item -Recurse -Force -LiteralPath "src-tauri\prisma\migrations"</code></pre>
+        <p>Luego, abre una terminal en la carpeta <code>src-tauri</code> y ejecuta estos comandos uno por uno:</p>
+        <pre><code>cd src-tauri
+npx prisma migrate dev --name init_postgres
+npx prisma db seed</code></pre>
+        <p>Esto creará todas las tablas en Supabase y llenará los datos iniciales (roles, usuario admin, marcas, categorías, etc.).</p>
+        <div class="tip">
+          <strong>Si ya tienes datos reales:</strong> este paso solo crea datos de ejemplo. Para migrar los datos de tu SQLite actual a Supabase, salta a la sección <em>¿Cómo paso mis datos actuales?</em> al final.
+        </div>
+      </li>
+
+      <li>
+        <h3>Sube el proyecto a GitHub</h3>
+        <p>Render necesita leer el código desde internet. La forma más fácil es subirlo a GitHub:</p>
+        <ol>
+          <li>Crea una cuenta en <a href="https://github.com" target="_blank">github.com</a>.</li>
+          <li>Crea un nuevo repositorio privado llamado <code>tess-inventario</code>.</li>
+          <li>Descarga <a href="https://desktop.github.com" target="_blank">GitHub Desktop</a> si no sabes usar Git.</li>
+          <li>Sube la carpeta del proyecto siguiendo las instrucciones de GitHub Desktop.</li>
+        </ol>
+        <p>O, si prefieres, copia y pega este comando en la terminal dentro de la carpeta del proyecto:</p>
+        <pre><code>git init
+git add .
+git commit -m "Preparar para Supabase y Render"
+git branch -M main
+git remote add origin https://github.com/TU_USUARIO/tess-inventario.git
+git push -u origin main</code></pre>
+      </li>
+
+      <li>
+        <h3>Crea el servidor en Render</h3>
+        <ol>
+          <li>Entra a <a href="https://render.com" target="_blank">render.com</a> y crea una cuenta.</li>
+          <li>Clic en <strong>New</strong> → <strong>Web Service</strong>.</li>
+          <li>Conecta tu cuenta de GitHub y selecciona el repositorio <code>tess-inventario</code>.</li>
+          <li>Completa los datos:
+            <table>
+              <tr><th>Campo</th><th>Valor</th></tr>
+              <tr><td>Name</td><td>tess-backend</td></tr>
+              <tr><td>Region</td><td>Oregon (EE.UU.) o la más cercana</td></tr>
+              <tr><td>Root Directory</td><td><code>src-tauri</code></td></tr>
+              <tr><td>Runtime</td><td>Node</td></tr>
+              <tr><td>Build Command</td><td><code>npm install</code></td></tr>
+              <tr><td>Start Command</td><td><code>npm start</code></td></tr>
+              <tr><td>Plan</td><td>Free (o Starter si quieres evitar pausas)</td></tr>
+            </table>
+          </li>
+          <li>En <strong>Environment Variables</strong> agrega:
+            <ul>
+              <li><code>DATABASE_URL</code> = la URL de Supabase del paso 1</li>
+              <li><code>NODE_ENV</code> = <code>production</code></li>
+            </ul>
+          </li>
+          <li>Clic en <strong>Create Web Service</strong>.</li>
+        </ol>
+        <p>Render comenzará a instalar y desplegar. En unos minutos te dará una URL como:</p>
+        <pre><code>https://tess-backend.onrender.com</code></pre>
+        <div class="tip">
+          <strong>Importante:</strong> con el plan gratis, el servidor se duerme después de 15 min sin uso. La primera vez que abras la app puede tardar 30-60 segundos en responder. Si esto te molesta, puedes pagar el plan Starter (~$7/mes) para que esté siempre activo.
+        </div>
+      </li>
+
+      <li>
+        <h3>Conecta el frontend al servidor de Render</h3>
+        <ol>
+          <li>Abre el archivo <code>.env</code> en la raíz del proyecto.</li>
+          <li>Cambia la URL de Supabase/localhost por la URL que te dio Render:
+            <pre><code>VITE_API_BASE_URL=https://tess-backend.onrender.com</code></pre>
+          </li>
+          <li>Guarda el archivo.</li>
+        </ol>
+      </li>
+
+      <li>
+        <h3>Compila la app para instalar en ambas computadoras</h3>
+        <p>Abre una terminal en la carpeta raíz del proyecto y ejecuta:</p>
+        <pre><code>npm run tauri:build</code></pre>
+        <p>Esto creará los instaladores dentro de <code>src-tauri/target/release/bundle</code>. Busca el archivo <code>.msi</code> (Windows) o <code>.dmg</code> (Mac).</p>
+        <p>Copia ese instalador en ambas computadoras e instálalo.</p>
+        <div class="box warning">
+          Cada vez que cambies la URL del backend (por ejemplo, si Render te da otra URL), debes volver a compilar y reinstalar la app en ambas computadoras.
+        </div>
+      </li>
+
+      <li>
+        <h3>Prueba que todo funciona</h3>
+        <ol>
+          <li>Abre la app en una computadora.</li>
+          <li>Inicia sesión con <code>admin</code> / <code>admin123</code>.</li>
+          <li>Crea un producto o una venta.</li>
+          <li>Abre la app en la otra computadora y verifica que el producto/venta aparece.</li>
+        </ol>
+      </li>
+    </ol>
+
+    <h2>¿Cómo paso mis datos actuales?</h2>
+    <p>Si ya tienes información real en el archivo <code>database/inventory.db</code> local, tienes dos opciones:</p>
+    <ul>
+      <li><strong>Empezar de cero:</strong> el paso 3 crea datos de ejemplo. Luego ingresas tus productos, clientes y ventas manualmente.</li>
+      <li><strong>Migrar los datos:</strong> esto requiere ayuda de alguien con conocimientos técnicos. Se puede usar <code>pgloader</code> o exportar las tablas de SQLite a CSV e importarlas en Supabase. Si necesitas esto, pídeselo a quien te ayude con computadoras.</li>
+    </ul>
+
+    <h2>Costos aproximados</h2>
+    <table>
+      <tr><th>Servicio</th><th>Plan</th><th>Costo mensual</th></tr>
+      <tr><td>Supabase</td><td>Free</td><td>$0 (hasta 500 MB)</td></tr>
+      <tr><td>Render</td><td>Free</td><td>$0 (con pausas de inactividad)</td></tr>
+      <tr><td>Render</td><td>Starter</td><td>~$7 USD (~MXN 130)</td></tr>
+    </table>
+
+    <h2>Problemas comunes</h2>
+    <ul>
+      <li><strong>La app no conecta:</strong> revisa que <code>VITE_API_BASE_URL</code> en el archivo <code>.env</code> sea exactamente la URL de Render, incluyendo <code>https://</code> y sin barra al final.</li>
+      <li><strong>“Error de conexión a la base de datos”:</strong> verifica que <code>DATABASE_URL</code> esté correcta en Render y que uses el puerto <code>6543</code> (connection pooler) de Supabase.</li>
+      <li><strong>La app tarda en cargar:</strong> es normal en el plan gratis de Render; el servidor se duerme y tarda en despertar.</li>
+      <li><strong>Tablas vacías o faltan datos iniciales:</strong> asegúrate de ejecutar <code>npx prisma db seed</code> en el paso 3.</li>
+    </ul>
+
+    <div class="box">
+      <strong>Resumen rápido:</strong> crea Supabase → crea <code>src-tauri/.env</code> con la URL → corre <code>prisma migrate dev</code> y <code>db seed</code> → sube a GitHub → despliega en Render con Root Directory <code>src-tauri</code> → pega la URL de Render en el <code>.env</code> raíz → compila con <code>npm run tauri:build</code> → instala en ambas PCs.
+    </div>
+
+    <div class="footer">
+      Guía generada para TESS Inventario · Julio 2026 · Si cambian las pantallas de Supabase/Render, los nombres pueden variar ligeramente.
+    </div>
+  </div>
+</body>
+</html>

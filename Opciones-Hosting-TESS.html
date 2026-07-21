@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opciones para compartir TESS Inventario entre 2 computadoras</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --text: #1f2937;
+      --bg: #ffffff;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --row-alt: #f9fafb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    h1 { font-size: 2rem; color: var(--primary); margin-bottom: 0.3rem; }
+    h2 { font-size: 1.4rem; margin-top: 2rem; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 0.4rem; }
+    h3 { font-size: 1.1rem; margin-top: 1.5rem; color: #111827; }
+    p { margin: 0.8rem 0; }
+    .subtitle { color: var(--muted); font-size: 1.05rem; margin-top: 0; }
+    .box {
+      background: #eff6ff;
+      border-left: 5px solid var(--primary);
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 1.2rem 0;
+    }
+    .warning {
+      background: #fff7ed;
+      border-left-color: #f97316;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f3f4f6; font-weight: 600; }
+    tr:nth-child(even) { background: var(--row-alt); }
+    .price { font-weight: 700; color: #047857; white-space: nowrap; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .badge-recomendado { background: #dcfce7; color: #166534; }
+    .badge-gratis { background: #dbeafe; color: #1e40af; }
+    .badge-facil { background: #f3e8ff; color: #6b21a8; }
+    ul, ol { margin: 0.6rem 0; padding-left: 1.4rem; }
+    li { margin: 0.35rem 0; }
+    .option-block {
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 1rem 0;
+    }
+    .option-block h3 { margin-top: 0; }
+    .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px; }
+    @media (max-width: 640px) { .pros-cons { grid-template-columns: 1fr; } }
+    .pros { color: #047857; }
+    .cons { color: #b91c1c; }
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .print-note {
+      background: #f3f4f6;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 2rem;
+    }
+    @media print {
+      body { background: white; }
+      .page { padding: 0; max-width: none; }
+      .print-note { display: none; }
+      h2 { page-break-after: avoid; }
+      .option-block { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Opciones para compartir TESS Inventario entre 2 computadoras</h1>
+    <p class="subtitle">Escenario: las dos computadoras están en lugares diferentes y se conectan por internet. <strong>Julio 2026.</strong></p>
+
+    <div class="box warning">
+      <strong>Antes de ver precios, esto es lo más importante:</strong> la app TESS Inventario no guarda los datos dentro de Tauri. Actualmente usa un servidor <strong>Node.js + Prisma</strong> en la misma computadora y una base de datos <strong>SQLite</strong> local. Si cada computadora tiene su propio archivo de base de datos, <strong>no se sincronizan</strong>. Para compartir información, ambas deben conectarse al <strong>mismo servidor y la misma base de datos</strong> que estén en internet (o en una computadora expuesta a internet).
+    </div>
+
+    <h2>Resumen rápido</h2>
+    <p>Para dos equipos en diferentes lugares necesitas contratar un “sitio” en internet que aloje el servidor y la base de datos. Estas son las opciones más económicas:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Opción</th>
+          <th>Precio aprox./mes</th>
+          <th>Dificultad</th>
+          <th>Ideal si…</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hetzner VPS</strong> <span class="badge badge-recomendado">Recomendado</span></td>
+          <td class="price">~$5 USD (~MXN 90-110)</td>
+          <td>Media</td>
+          <td>Quieres lo más barato y no te importa instalar/configurar.</td>
+        </tr>
+        <tr>
+          <td><strong>Render</strong> (Postgres + web gratis)</td>
+          <td class="price">~$7 USD (~MXN 125-140)</td>
+          <td>Baja</td>
+          <td>Prefieres que ellos administren casi todo.</td>
+        </tr>
+        <tr>
+          <td><strong>Supabase</strong> (BD) + <strong>Render/Fly</strong> (servidor)</td>
+          <td class="price">$0 a ~$7 USD</td>
+          <td>Media</td>
+          <td>Quieres empezar gratis y aceptas limites.</td>
+        </tr>
+        <tr>
+          <td><strong>Neon</strong> (BD) + <strong>Render/Fly</strong> (servidor)</td>
+          <td class="price">$0 a ~$7 USD</td>
+          <td>Media</td>
+          <td>Quieres Postgres serverless gratuito.</td>
+        </tr>
+        <tr>
+          <td><strong>Railway</strong></td>
+          <td class="price">Desde ~$10-15 USD</td>
+          <td>Baja</td>
+          <td>Quieres desplegar rápido sin complicarte.</td>
+        </tr>
+        <tr>
+          <td><strong>Aiven</strong> (BD)</td>
+          <td class="price">$0 (hasta 5 GB)</td>
+          <td>Media</td>
+          <td>Necesitas más espacio gratis, pero requiere servidor aparte.</td>
+        </tr>
+        <tr>
+          <td><strong>PlanetScale</strong> (MySQL)</td>
+          <td class="price">$0 (hasta 5 GB)</td>
+          <td>Media-Alta</td>
+          <td>Si estás dispuesto a ajustar Prisma para MySQL.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Explicación de cada opción</h2>
+
+    <div class="option-block">
+      <h3>1. Hetzner VPS <span class="badge badge-recomendado">Más barato todo en uno</span></h3>
+      <p>Es como rentar una computadora pequeña en internet. Ahí instalas el servidor Node.js y PostgreSQL tú mismo.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>El precio más bajo por servidor + base de datos juntos.</li>
+            <li>Una sola factura y control total.</li>
+            <li>Muy estable y buen rendimiento.</li>
+            <li>No hay límites raros de “sleep” ni conexiones.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>Tienes que instalar y mantener Node, Postgres y backups.</li>
+            <li>Si algo falla, necesitas a alguien que lo revise.</li>
+            <li>Datacenter en Europa/EE.UU.; algo de latencia a México.</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> CPX11 desde ~€4.51/mes (~$5 USD, ~MXN 90-110).</p>
+    </div>
+
+    <div class="option-block">
+      <h3>2. Render</h3>
+      <p>Te da la base de datos administrada y puedes subir el backend. Tiene una versión gratuita para el servidor web, pero la base de datos es de pago.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>Muy fácil de usar, casi todo automático.</li>
+            <li>No tienes que mantener el servidor manualmente.</li>
+            <li>Despliegue desde GitHub.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>El servidor web gratuito se “duerme” tras 15 min sin uso y tarda en despertar.</li>
+            <li>La base de datos PostgreSQL cuesta desde $7/mes.</li>
+            <li>Para un uso fluido necesitas el servidor de pago.</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> Postgres desde ~$7 USD/mes. Servidor web gratis (con inactividad) o ~$7/mes para que no se duerma.</p>
+    </div>
+
+    <div class="option-block">
+      <h3>3. Supabase (base de datos) + Render/Fly.io (servidor)</h3>
+      <p>Supabase te da una base de datos PostgreSQL gratuita, pero el backend de TESS debe correr en otro servicio (Render o Fly.io).</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>La base de datos es gratis hasta 500 MB.</li>
+            <li>Supabase administra backups y seguridad.</li>
+            <li>Fly.io o Render pueden ser gratis para el backend.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>Son dos servicios distintos que administrar.</li>
+            <li>Límite de conexiones (~60 en el plan gratis).</li>
+            <li>El backend gratis se puede dormir (cold start).</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> $0 si entras en los límites gratis; si creces, ~$25/mes por Supabase + backend.</p>
+    </div>
+
+    <div class="option-block">
+      <h3>4. Neon (base de datos) + Render/Fly.io (servidor)</h3>
+      <p>Similar a Supabase: base de datos Postgres serverless gratuita, backend aparte.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>500 MB gratis y pago por uso.</li>
+            <li>Se integra bien con Prisma.</li>
+            <li>No tienes que instalar Postgres.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>En plan gratuito la base de datos puede pausarse y tardar en arrancar.</li>
+            <li>Necesitas servidor aparte.</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> $0 para empezar; servidor aparte desde ~$0 a $7/mes.</p>
+    </div>
+
+    <div class="option-block">
+      <h3>5. Railway</h3>
+      <p>Plataforma moderna para desplegar aplicaciones Node + base de datos con pocos clics.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>Muy fácil de desplegar.</li>
+            <li>Todo en una sola plataforma.</li>
+            <li>Buena experiencia para proyectos pequeños.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>Ya no tiene plan gratuito; mínimo ~$5/mes y suele subir a ~$10-15/mes.</li>
+            <li>El costo puede crecer si no se controla.</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> Desde ~$10-15 USD/mes para backend + base de datos pequeños.</p>
+    </div>
+
+    <div class="option-block">
+      <h3>6. Aiven</h3>
+      <p>Base de datos PostgreSQL/MySQL en la nube con un plan gratuito generoso.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>5 GB gratis, mucho más que Supabase/Neon.</li>
+            <li>Backups incluidos.</li>
+            <li>Buena para almacenar más datos sin pagar.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>Solo es la base de datos; backend en otro lado.</li>
+            <li>Plan gratuito con algunos límites de CPU/conexiones.</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> $0 hasta 5 GB; luego planes de pago.</p>
+    </div>
+
+    <div class="option-block">
+      <h3>7. PlanetScale</h3>
+      <p>Base de datos MySQL serverless. Requiere cambiar Prisma de PostgreSQL a MySQL.</p>
+      <div class="pros-cons">
+        <div class="pros">
+          <strong>Ventajas</strong>
+          <ul>
+            <li>5 GB y 1,000 millones de filas gratis.</li>
+            <li>MySQL compatible.</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <strong>Desventajas</strong>
+          <ul>
+            <li>Hay que adaptar el esquema de Prisma (relaciones sin foreign keys).</li>
+            <li>Necesitas backend aparte.</li>
+            <li>Más trabajo inicial.</li>
+          </ul>
+        </div>
+      </div>
+      <p><strong>Precio:</strong> $0 hasta 5 GB.</p>
+    </div>
+
+    <h2>¿Cuál elegir?</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Situación</th>
+          <th>Mi recomendación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Quiero lo más barato y tengo a alguien que configura</td>
+          <td><strong>Hetzner VPS</strong> (~$5/mes)</td>
+        </tr>
+        <tr>
+          <td>Quiero lo más fácil sin instalar nada</td>
+          <td><strong>Render</strong> o <strong>Railway</strong></td>
+        </tr>
+        <tr>
+          <td>Quiero empezar gratis y los datos son pocos</td>
+          <td><strong>Supabase</strong> + <strong>Render/Fly.io</strong></td>
+        </tr>
+        <tr>
+          <td>Quiero más espacio gratis</td>
+          <td><strong>Aiven</strong> (5 GB) + servidor aparte</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>¿Qué cambios requiere la app?</h2>
+    <ol>
+      <li><strong>Migrar la base de datos:</strong> cambiar <code>schema.prisma</code> de <code>sqlite</code> a <code>postgresql</code> (o MySQL).</li>
+      <li><strong>Migrar datos:</strong> pasar lo que ya tienes en <code>inventory.db</code> a la nueva base de datos.</li>
+      <li><strong>Desplegar el backend Node.js</strong> en el servicio elegido con la nueva URL de base de datos.</li>
+      <li><strong>Cambiar la URL del frontend</strong> (<code>src/services/api.service.ts</code>) de <code>127.0.0.1:3000</code> a la dirección del backend en internet.</li>
+    </ol>
+
+    <div class="box">
+      <strong>Conclusión:</strong> para dos computadoras en diferentes lugares y lo más económico, mi primera opción es <strong>Hetzner VPS (~$5/mes)</strong>. Si no quieres configurar nada, <strong>Render</strong> o <strong>Railway</strong> son más sencillos pero cuestan un poco más. Si quieres empezar sin pagar, <strong>Supabase o Neon + Render/Fly</strong> te permiten arrancar gratis a cambio de algunas limitaciones.
+    </div>
+
+    <div class="print-note">
+      <strong>Si quieres guardar esto como PDF:</strong> abre este archivo en Chrome/Edge, presiona <code>Ctrl + P</code> (o Archivo → Imprimir) y elige <strong>Guardar como PDF</strong>.
+    </div>
+
+    <div class="footer">
+      Documento generado para TESS Inventario · Julio 2026 · Los precios son aproximados y sujetos a cambio por parte de cada proveedor.
+    </div>
+  </div>
+</body>
+</html>

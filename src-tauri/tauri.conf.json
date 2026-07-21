@@ -1,0 +1,66 @@
+{
+  "$schema": "https://schema.tauri.app/config/1.0.0",
+  "build": {
+    "beforeBuildCommand": "npm --prefix .. run frontend-build",
+    "beforeDevCommand": "npm --prefix .. run dev",
+    "devPath": "http://localhost:5174",
+    "distDir": "../dist"
+  },
+  "package": {
+    "productName": "TESS Inventario",
+    "version": "1.0.0"
+  },
+  "tauri": {
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "fs": {
+        "all": false,
+        "readFile": true,
+        "writeFile": true,
+        "readDir": true,
+        "createDir": true,
+        "removeFile": true,
+        "exists": true,
+        "scope": ["**"]
+      },
+      "path": {
+        "all": true
+      },
+      "dialog": {
+        "all": false,
+        "open": true,
+        "save": true
+      }
+    },
+    "bundle": {
+      "active": true,
+      "targets": "all",
+      "identifier": "com.tess-inventario.app",
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ]
+    },
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "title": "TESS Inventario",
+        "width": 1400,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false,
+        "minWidth": 1024,
+        "minHeight": 768
+      }
+    ]
+  }
+}
